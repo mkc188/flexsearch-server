@@ -22,7 +22,7 @@ const flexsearch = require("flexsearch").create({
     cache: config.cache,
     threshold: 0,
     depth: 5,
-    limit: config.limit,
+    limit: 5,
     encode: 'icase',
     split: function(str) {
       return m.tokenize(str);

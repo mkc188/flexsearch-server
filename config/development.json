@@ -4,8 +4,8 @@
     "port": 8070,
     "port_ssl": 443,
     "force_ssl": false,
-    "https": true,
-    "compress": true,
+    "https": false,
+    "compress": false,
     "autosave": 2000,
     "worker": "auto"
   },
