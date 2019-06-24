@@ -5,7 +5,7 @@
     "port_ssl": 443,
     "force_ssl": false,
     "https": false,
-    "compress": false,
+    "compress": true,
     "autosave": 2000,
     "worker": "auto"
   },
