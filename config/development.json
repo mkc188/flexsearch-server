@@ -1,7 +1,7 @@
 {
   "server": {
     "debug": true,
-    "port": 80,
+    "port": 8070,
     "port_ssl": 443,
     "force_ssl": false,
     "https": true,

@@ -1,18 +1,47 @@
 const { config, init, read_from_file, write_schedule } = require("./helper");
+const MEACT = require('mixed-english-and-chinese-tokenizer');
 
-const flexsearch = require("flexsearch").create(config ? config.preset || {
+let m = new MEACT();
 
+// const flexsearch = require("flexsearch").create(config ? config.preset || {
+// 
+//     async: true,
+//     cache: config.cache,
+//     threshold: config.threshold,
+//     depth: config.depth,
+//     limit: config.limit,
+//     encode: config.encode,
+//     tokenize: config.tokenize,
+//     filter: config.filter,
+//     stemmer: config.stemmer
+// 
+// } : null);
+
+const flexsearch = require("flexsearch").create({
     async: true,
     cache: config.cache,
-    threshold: config.threshold,
-    depth: config.depth,
+    threshold: 0,
+    depth: 5,
     limit: config.limit,
-    encode: config.encode,
-    tokenize: config.tokenize,
+    encode: 'icase',
+    split: function(str) {
+      return m.tokenize(str);
+    },
+    tokenize: 'strict',
     filter: config.filter,
     stemmer: config.stemmer
-
-} : null);
+}).addMatcher({
+  '０': '0',
+  '１': '1',
+  '２': '2',
+  '３': '3',
+  '４': '4',
+  '５': '5',
+  '６': '6',
+  '７': '7',
+  '８': '8',
+  '９': '9'
+});
 
 const index_map = {};
 const connection = {};
