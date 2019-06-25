@@ -63,7 +63,9 @@ app.use(json());
 /* Routes
 -----------------------------------------------*/
 
-app.get("/", controller.index);
+// app.get("/", controller.index);
+app.get("/", controller.search2);
+app.get("/index", controller.index);
 app.post("/add", controller.add_bulk);
 app.post("/add/:id/:content", controller.add);
 app.post("/update", controller.update_bulk);

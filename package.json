@@ -46,7 +46,9 @@
     "compression": "^1.7.3",
     "express": "^4.16.4",
     "flexsearch": "git+https://github.com/mkc188/flexsearch.git#split-function",
-    "mixed-english-and-chinese-tokenizer": "git+https://github.com/mkc188/mixed-english-and-chinese-tokenizer.git"
+    "hashids": "^1.2.2",
+    "mixed-english-and-chinese-tokenizer": "git+https://github.com/mkc188/mixed-english-and-chinese-tokenizer.git",
+    "redis": "^2.8.0"
   },
   "flexsearch": "development",
   "devDependencies": {

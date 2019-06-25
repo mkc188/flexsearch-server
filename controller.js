@@ -2,6 +2,18 @@ const { write_schedule } = require("./helper");
 const { flexsearch, pool:worker_pool, connection } = require("./handler");
 const index_map = {};
 let worker_index = 0;
+var Hashids = require('hashids');
+var hashids = new Hashids('h6ALinjI');
+
+var redis = require("redis"),
+    client = redis.createClient({host: 'sg-geocode2.hktaxiapp.com', db: 1, password: '95c0aa18e14cdeba5029c9c64cae42e73abc79a347b24a21990f1d9d428acd3e'});
+
+client.on("error", function (err) {
+    console.log("Error " + err);
+});
+
+const {promisify} = require('util');
+const hgetAsync = promisify(client.hget).bind(client);
 
 module.exports = {
 
@@ -196,8 +208,42 @@ module.exports = {
                     }
                 }
                 else{
+                    var search_results = await flexsearch.search(query, 5);
+                    var ret = {"status": "OK", "predictions": []};
 
-                    res.json(await flexsearch.search(query));
+                    for (let item of search_results) {
+                      console.log(item);
+                      var numbers = hashids.decode(item);
+                      console.log(numbers);
+                      if (numbers.length) {
+                        if (numbers[1]) {
+                          var chinesename = await hgetAsync('ibg1000:' + numbers[1], 'chinesename');
+                          var c_locality = await hgetAsync('ibg1000:' + numbers[1], 'c_locality');
+                          ret['predictions'].push({
+                            'description': '香港' + chinesename,
+                            'place_id': item + '=',
+                            'terms': [{
+                              'offset': 2,
+                              'value': c_locality
+                            }]
+                          });
+                        } else if (numbers[2]) {
+                          var chinesename = await hgetAsync('isg1000:' + numbers[2], 'chinesename');
+                          var c_locality = await hgetAsync('isg1000:' + numbers[2], 'c_locality');
+                          ret['predictions'].push({
+                            'description': '香港' + chinesename,
+                            'place_id': item + '=',
+                            'terms': [{
+                              'offset': 2,
+                              'value': c_locality
+                            }]
+                          });
+                        } else if (numbers[3]) {
+                        }
+                      }
+                    }
+
+                    res.json(ret);
                 }
             }
             catch(err){
@@ -208,6 +254,93 @@ module.exports = {
         else{
 
             res.json([]);
+        }
+    },
+
+    search2: async function(req, res, next){
+
+        const query = req.query.input;
+        const language = req.query.language;
+        const isEn = language && language.startsWith('en');
+
+        if(query){
+
+            try{
+
+                if(worker_pool.length){
+
+                    const uid = (Math.random() * 999999999) >> 0;
+
+                    connection[uid] = res;
+
+                    for(let i = 1; i < worker_pool.length; i++){
+
+                        worker_pool[i].send({
+
+                            job: "search",
+                            query: query,
+                            task: uid
+                        });
+                    }
+                }
+                else{
+                    var search_results = await flexsearch.search(query, 5);
+                    var ret = {"status": "OK", "predictions": []};
+
+                    for (let item of search_results) {
+                      console.log(item);
+                      var numbers = hashids.decode(item);
+                      console.log(numbers);
+                      if (numbers.length) {
+                        if (numbers[1]) {
+                          if (isEn) {
+                            var building = await hgetAsync('ibg1000:' + numbers[1], 'englishname');
+                            var locality = await hgetAsync('ibg1000:' + numbers[1], 'e_locality');
+                          } else {
+                            var building = '香港' + await hgetAsync('ibg1000:' + numbers[1], 'chinesename');
+                            var locality = await hgetAsync('ibg1000:' + numbers[1], 'c_locality');
+                          }
+                          ret['predictions'].push({
+                            'description': building,
+                            'place_id': item + '=',
+                            'terms': [{
+                              'offset': 2,
+                              'value': locality
+                            }]
+                          });
+                        } else if (numbers[2]) {
+                          if (isEn) {
+                            var site = await hgetAsync('isg1000:' + numbers[2], 'englishname');
+                            var locality = await hgetAsync('isg1000:' + numbers[2], 'e_locality');
+                          } else {
+                            var site = '香港' + await hgetAsync('isg1000:' + numbers[2], 'chinesename');
+                            var locality = await hgetAsync('isg1000:' + numbers[2], 'c_locality');
+                          }
+                          ret['predictions'].push({
+                            'description': site,
+                            'place_id': item + '=',
+                            'terms': [{
+                              'offset': 2,
+                              'value': locality
+                            }]
+                          });
+                        } else if (numbers[3]) {
+                        }
+                      }
+                    }
+
+                    res.json(ret);
+                }
+            }
+            catch(err){
+
+                next(err);
+            }
+        }
+        else{
+
+            // res.json([]);
+            res.json({"status": "OK", "predictions": []});
         }
     },
 
