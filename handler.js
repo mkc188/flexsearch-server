@@ -20,8 +20,8 @@ let m = new MEACT();
 const flexsearch = require("flexsearch").create({
     async: true,
     cache: config.cache,
-    threshold: 0,
-    depth: 5,
+    threshold: 1,
+    depth: 4,
     limit: 5,
     encode: 'icase',
     split: function(str) {

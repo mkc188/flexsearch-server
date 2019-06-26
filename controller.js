@@ -284,7 +284,12 @@ module.exports = {
                     }
                 }
                 else{
-                    var search_results = await flexsearch.search(query, 5);
+                    var search_results = await flexsearch.search({
+                      query: query,
+                      threshold: 1,
+                      depth: 4,
+                      limit: 5,
+                    });
                     var ret = {"status": "OK", "predictions": []};
 
                     for (let item of search_results) {
