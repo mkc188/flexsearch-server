@@ -286,8 +286,8 @@ module.exports = {
                 else{
                     var search_results = await flexsearch.search({
                       query: query,
-                      threshold: 1,
-                      depth: 4,
+                      // threshold: 1,
+                      // depth: 4,
                       limit: 5,
                     });
                     var ret = {"status": "OK", "predictions": []};
