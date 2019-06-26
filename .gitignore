@@ -7,4 +7,3 @@ store
 package-lock.json
 coverage
 *.log
-*.u8
