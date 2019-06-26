@@ -299,10 +299,10 @@ module.exports = {
                       if (numbers.length) {
                         if (numbers[1]) {
                           if (isEn) {
-                            var building = await hgetAsync('ibg1000:' + numbers[1], 'englishname');
+                            var building = await hgetAsync('ibg1000:' + numbers[1], 'e_address');
                             var locality = await hgetAsync('ibg1000:' + numbers[1], 'e_locality');
                           } else {
-                            var building = '香港' + await hgetAsync('ibg1000:' + numbers[1], 'chinesename');
+                            var building = '香港' + await hgetAsync('ibg1000:' + numbers[1], 'c_address');
                             var locality = await hgetAsync('ibg1000:' + numbers[1], 'c_locality');
                           }
                           ret['predictions'].push({
@@ -315,10 +315,10 @@ module.exports = {
                           });
                         } else if (numbers[2]) {
                           if (isEn) {
-                            var site = await hgetAsync('isg1000:' + numbers[2], 'englishname');
+                            var site = await hgetAsync('isg1000:' + numbers[2], 'e_address');
                             var locality = await hgetAsync('isg1000:' + numbers[2], 'e_locality');
                           } else {
-                            var site = '香港' + await hgetAsync('isg1000:' + numbers[2], 'chinesename');
+                            var site = '香港' + await hgetAsync('isg1000:' + numbers[2], 'c_address');
                             var locality = await hgetAsync('isg1000:' + numbers[2], 'c_locality');
                           }
                           ret['predictions'].push({
@@ -330,6 +330,21 @@ module.exports = {
                             }]
                           });
                         } else if (numbers[3]) {
+                          if (isEn) {
+                            var street = await hgetAsync('irg1000:' + numbers[3], 'e_street');
+                            var locality = await hgetAsync('irg1000:' + numbers[3], 'e_locality');
+                          } else {
+                            var street = '香港' + await hgetAsync('irg1000:' + numbers[3], 'c_street');
+                            var locality = await hgetAsync('irg1000:' + numbers[3], 'c_locality');
+                          }
+                          ret['predictions'].push({
+                            'description': street,
+                            'place_id': item + '=',
+                            'terms': [{
+                              'offset': 2,
+                              'value': locality
+                            }]
+                          });
                         }
                       }
                     }
