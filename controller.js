@@ -345,6 +345,22 @@ module.exports = {
                               'value': locality
                             }]
                           });
+                        } else if (numbers[4]) {
+                          if (isEn) {
+                            var facility = await hgetAsync('igeocom:' + numbers[4], 'englishname');
+                            var locality = await hgetAsync('igeocom:' + numbers[4], 'e_area');
+                          } else {
+                            var facility = '香港' + await hgetAsync('igeocom:' + numbers[4], 'chinesename');
+                            var locality = await hgetAsync('igeocom:' + numbers[4], 'c_area');
+                          }
+                          ret['predictions'].push({
+                            'description': facility,
+                            'place_id': item + '=',
+                            'terms': [{
+                              'offset': 2,
+                              'value': locality
+                            }]
+                          });
                         }
                       }
                     }
