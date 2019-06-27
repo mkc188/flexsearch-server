@@ -209,7 +209,8 @@ module.exports = {
                 }
                 else{
                     var search_results = await flexsearch.search(query, 5);
-                    var ret = {"status": "OK", "predictions": []};
+                    // var ret = {"status": "OK", "predictions": []};
+                    var predictions = [];
 
                     for (let item of search_results) {
                       console.log(item);
@@ -219,7 +220,7 @@ module.exports = {
                         if (numbers[1]) {
                           var chinesename = await hgetAsync('ibg1000:' + numbers[1], 'chinesename');
                           var c_locality = await hgetAsync('ibg1000:' + numbers[1], 'c_locality');
-                          ret['predictions'].push({
+                          predictions.push({
                             'description': '香港' + chinesename,
                             'place_id': item + '=',
                             'terms': [{
@@ -230,7 +231,7 @@ module.exports = {
                         } else if (numbers[2]) {
                           var chinesename = await hgetAsync('isg1000:' + numbers[2], 'chinesename');
                           var c_locality = await hgetAsync('isg1000:' + numbers[2], 'c_locality');
-                          ret['predictions'].push({
+                          predictions.push({
                             'description': '香港' + chinesename,
                             'place_id': item + '=',
                             'terms': [{
@@ -288,9 +289,10 @@ module.exports = {
                       query: query,
                       // threshold: 1,
                       // depth: 4,
-                      limit: 5,
+                      limit: 10,
                     });
-                    var ret = {"status": "OK", "predictions": []};
+                    // var ret = {"status": "OK", "predictions": []};
+                    var predictions = [];
 
                     for (let item of search_results) {
                       console.log(item);
@@ -305,7 +307,7 @@ module.exports = {
                             var building = '香港' + await hgetAsync('ibg1000:' + numbers[1], 'c_address');
                             var locality = await hgetAsync('ibg1000:' + numbers[1], 'c_locality');
                           }
-                          ret['predictions'].push({
+                          predictions.push({
                             'description': building,
                             'place_id': item + '=',
                             'terms': [{
@@ -321,7 +323,7 @@ module.exports = {
                             var site = '香港' + await hgetAsync('isg1000:' + numbers[2], 'c_address');
                             var locality = await hgetAsync('isg1000:' + numbers[2], 'c_locality');
                           }
-                          ret['predictions'].push({
+                          predictions.push({
                             'description': site,
                             'place_id': item + '=',
                             'terms': [{
@@ -337,7 +339,7 @@ module.exports = {
                             var street = '香港' + await hgetAsync('irg1000:' + numbers[3], 'c_street');
                             var locality = await hgetAsync('irg1000:' + numbers[3], 'c_locality');
                           }
-                          ret['predictions'].push({
+                          predictions.push({
                             'description': street,
                             'place_id': item + '=',
                             'terms': [{
@@ -353,7 +355,7 @@ module.exports = {
                             var facility = '香港' + await hgetAsync('igeocom:' + numbers[4], 'chinesename');
                             var locality = await hgetAsync('igeocom:' + numbers[4], 'c_area');
                           }
-                          ret['predictions'].push({
+                          predictions.push({
                             'description': facility,
                             'place_id': item + '=',
                             'terms': [{
@@ -365,7 +367,7 @@ module.exports = {
                       }
                     }
 
-                    res.json(ret);
+                    res.json({"status": "OK", "predictions": predictions.sort((a, b) => a['description'].length - b['description'].length).slice(0, 5)});
                 }
             }
             catch(err){
