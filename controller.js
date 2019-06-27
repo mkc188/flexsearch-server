@@ -293,13 +293,15 @@ module.exports = {
                     });
                     // var ret = {"status": "OK", "predictions": []};
                     var predictions = [];
+                    var dup_dict = {};
 
                     for (let item of search_results) {
                       console.log(item);
                       var numbers = hashids.decode(item);
                       console.log(numbers);
                       if (numbers.length) {
-                        if (numbers[1]) {
+                        if (numbers[1] && !dup_dict[numbers[1]]) {
+                          dup_dict[numbers[1]] = true;
                           if (isEn) {
                             var building = await hgetAsync('ibg1000:' + numbers[1], 'e_address');
                             var locality = await hgetAsync('ibg1000:' + numbers[1], 'e_locality');
@@ -315,7 +317,8 @@ module.exports = {
                               'value': locality
                             }]
                           });
-                        } else if (numbers[2]) {
+                        } else if (numbers[2] && !dup_dict[numbers[2]]) {
+                          dup_dict[numbers[2]] = true;
                           if (isEn) {
                             var site = await hgetAsync('isg1000:' + numbers[2], 'e_address');
                             var locality = await hgetAsync('isg1000:' + numbers[2], 'e_locality');
@@ -331,7 +334,8 @@ module.exports = {
                               'value': locality
                             }]
                           });
-                        } else if (numbers[3]) {
+                        } else if (numbers[3] && !dup_dict[numbers[3]]) {
+                          dup_dict[numbers[3]] = true;
                           if (isEn) {
                             var street = await hgetAsync('irg1000:' + numbers[3], 'e_street');
                             var locality = await hgetAsync('irg1000:' + numbers[3], 'e_locality');
@@ -347,7 +351,8 @@ module.exports = {
                               'value': locality
                             }]
                           });
-                        } else if (numbers[4]) {
+                        } else if (numbers[4] && !dup_dict[numbers[4]]) {
+                          dup_dict[numbers[4]] = true;
                           if (isEn) {
                             var facility = await hgetAsync('igeocom:' + numbers[4], 'englishname');
                             var locality = await hgetAsync('igeocom:' + numbers[4], 'e_area');
