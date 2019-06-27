@@ -354,11 +354,11 @@ module.exports = {
                         } else if (numbers[4] && !dup_dict[numbers[4]]) {
                           dup_dict[numbers[4]] = true;
                           if (isEn) {
-                            var facility = await hgetAsync('igeocom:' + numbers[4], 'englishname');
-                            var locality = await hgetAsync('igeocom:' + numbers[4], 'e_area');
+                            var facility = await hgetAsync('igeocom2:' + numbers[4], 'englishname');
+                            var locality = await hgetAsync('igeocom2:' + numbers[4], 'e_area');
                           } else {
-                            var facility = '香港' + await hgetAsync('igeocom:' + numbers[4], 'chinesename');
-                            var locality = await hgetAsync('igeocom:' + numbers[4], 'c_area');
+                            var facility = '香港' + await hgetAsync('igeocom2:' + numbers[4], 'chinesename');
+                            var locality = await hgetAsync('igeocom2:' + numbers[4], 'c_area');
                           }
                           predictions.push({
                             'description': facility,
